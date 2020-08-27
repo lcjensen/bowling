@@ -13,13 +13,13 @@ ui <- fluidPage(
             actionButton(inputId = "hentKnap", label="Hent data"),
             actionButton(inputId = "validerKnap", label="Valider data"),
             
-            ),
+        ),
         
         mainPanel(
             uiOutput("tabel"),
             uiOutput("text")
         )
-        )
+    )
 )
 
 server <- function(input, output,session) {
@@ -49,13 +49,13 @@ server <- function(input, output,session) {
         
         points$presum <- points$V1+points$V2 #lav simpel sum
         
-       points$sum <- ifelse(points$V1==10, shift(points$presum+10, 1L, type="lead"),
+        points$sum <- ifelse(points$V1==10, shift(points$presum+10, 1L, type="lead"),
                              ifelse(points$presum==10, shift(points$V1+10, 1L, type="lead"), 
                                     points$presum)) #udregn strike og spare
-       points$Callout <- ifelse(points$V1==10, "Strike!", ifelse(points$V1+points$V2==10, "Spare!", "")) #angiv hvilker runder har strike og spares
+        points$Callout <- ifelse(points$V1==10, "Strike!", ifelse(points$V1+points$V2==10, "Spare!", "")) #angiv hvilker runder har strike og spares
         
         points$Points <- ifelse(is.na(points$sum), points$presum,points$sum) #genindfør simpel sum på linje 1
-       points <- within(points, Points <- cumsum(Points)) #beregn kumulativ sum
+        points <- within(points, Points <- cumsum(Points)) #beregn kumulativ sum
         points$Runde <- seq.int(nrow(points)) 
         
         body <- list(token = get$token, points=points$Points) #lav liste med token og resultater
@@ -68,8 +68,8 @@ server <- function(input, output,session) {
         output$test <- renderTable(printvenlig,digits = 0)
         output$valid <- renderText({ msg_txt() })
 
-   })
         })
+    })
     
     observeEvent( input$validerKnap, {
         verification <- fromJSON(content(ver(),type="text"))$succes #verificer at pointscoren er korrekt
@@ -77,7 +77,7 @@ server <- function(input, output,session) {
         if(verification==TRUE){
             msg_txt("Resultat valideret i API og er korrekt")
         }else{
-            msg_txt("Resultat er ikke valideret")
+            msg_txt("Resultat er ikke korrekt")
         }
         output$valid <- renderText({ msg_txt() })
         
